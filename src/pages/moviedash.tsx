@@ -26,22 +26,20 @@ const MovieDash: NextPage = () => {
             return (
       
                 <div className="flex flex-col bg-slate-400  mx-2 rounded-xl basis-1" key={movie.id}>
-                  <div className="align-bottom px-2 py-5">
-                    <Image 
-                      className=''
+                  <div className="flex px-2 py-5 justify-center">
+                    <Image
+                      className="justify-center"
                       alt="Movie Poster"
                       src={ movie.poster}
-                      
                       width={300}
                       height={300}
-                     
                       priority
                     />
                   </div>
         
                   <div className='flex-1'>
                     <div className='px-12'>
-                      <h1 className='text-3xl px-5 py-0 break-normal text-center whitespace-nowrap'>{movie.Title}</h1>
+                      <h1 className='text-3xl px-5 py-0 break-normal text-center whitespace-nowrap'>{movie.title}</h1>
         
                       <div className="flex text-center justify-center">
                         <h2 className='w-14 text-xl'>{movie.year}</h2>
