@@ -24,5 +24,8 @@ export const authRouter = router({
       }
     })
     return movie
+  }),
+  getAll: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.movie.findMany();
   })
 });
