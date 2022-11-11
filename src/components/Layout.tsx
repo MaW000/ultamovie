@@ -2,7 +2,8 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import React, {ReactNode} from 'react';
-
+import { signIn, signOut, useSession } from "next-auth/react";
+import { trpc } from "../utils/trpc";
 export default function Layout({ children } : { children: ReactNode }) {
   return (
     <>
@@ -19,7 +20,8 @@ export default function Layout({ children } : { children: ReactNode }) {
             <Link href="/" className="text-lg font-bold">
               MovieDB
             </Link>
-            <div>
+            <div className='flex'>
+              <AuthShowcase />
               <Link href="/moviedash" className="p-2">
                 Saved Movies
               </Link>
@@ -34,3 +36,31 @@ export default function Layout({ children } : { children: ReactNode }) {
     </>
   );
 }
+
+const AuthShowcase: React.FC = () => {
+  const { data: sessionData } = useSession();
+
+  const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery(
+    undefined, // no input
+    { enabled: sessionData?.user !== undefined },
+  );
+
+  return (
+    <div className="flex items-center justify-center gap-2">
+      {sessionData && (
+        <p className="text-2xl text-blue-500">
+          Logged in as {sessionData?.user?.name}
+        </p>
+      )}
+      {secretMessage && (
+        <p className="text-2xl text-blue-500">{secretMessage}</p>
+      )}
+      <button
+        className="rounded-md border border-violet-50 bg-purple-500 px-4 py-2 text-xl shadow-lg hover:bg-violet-100"
+        onClick={sessionData ? () => signOut() : () => signIn()}
+      >
+        {sessionData ? "Sign out" : "Sign in"}
+      </button>
+    </div>
+  );
+};

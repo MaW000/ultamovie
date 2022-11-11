@@ -6,7 +6,9 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Layout from '../components/Layout';
 import { trpc } from "../utils/trpc";
 import { useState, useEffect } from "react";
+import { CreateMovieInput } from "../server/trpc/router/schema/movie.schema";
 const Home: NextPage = () => {
+  const { data: sessionData} = useSession();
   const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
   interface Inputs {
     title: string,
@@ -25,7 +27,22 @@ const Home: NextPage = () => {
       [name]: value
     }))
   }
-  console.log(inputs)
+  const mutation = trpc.auth.saveMovie.useMutation();
+  console.log(movie)
+  const input = {
+    plot: movie.Plot,
+    title: movie.Title,
+    year: movie.Year,
+    rated: movie.Rated,
+    imdbRating: movie.imdbRating,
+    poster: movie.Poster
+  };
+  const handleSave = (input: CreateMovieInput) => {
+    
+   
+    mutation.mutate(input)
+  }
+
   useEffect(() => {
     try {
       fetch(`http://www.omdbapi.com/?t=${inputs.title}&y=${inputs.year}&apikey=c450e1a6`)
@@ -107,7 +124,8 @@ const Home: NextPage = () => {
               <p className="p-5 ">{movie.Plot}</p>
             </div>
             
-
+            <button type="button" onClick={() => handleSave(input)} className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Save</button>
+            
           </div>
         }
         </div>
