@@ -5,30 +5,64 @@ import Image from 'next/image'
 import { signIn, signOut, useSession } from "next-auth/react";
 import Layout from '../components/Layout';
 import { trpc } from "../utils/trpc";
-import React, { useState, useEffect } from "react";
-import { CreateMovieInput } from "../server/trpc/router/schema/movie.schema";
+import React, { useState, useEffect, MouseEvent } from "react";
+import { CreateGroupInput } from "../server/trpc/router/schema/movie.schema";
+import { Dropdown } from 'flowbite-react';
+import { useForm } from 'react-hook-form'
+
 const MovieDash: NextPage = () => {
-  const mutation = trpc.auth.getAll.useQuery();
+  const [group, setGroup] = useState({group: 'General'})
+  const { handleSubmit, register } = useForm<CreateGroupInput>()
+  const [editToggle, setEditToggle] = useState(false)
+  const movies = trpc.auth.getAll.useQuery(group);
   
-    const handleDelete = async(e) => {
-        const dbkey = (e.target.parentNode.parentNode.getAttribute('dbkey'));
-        try {
-          
-        } catch (error) {
-          console.log(error)
-        }
-      }
+  const mutation = trpc.auth.editGroup.useMutation();
+
+  function onSubmit(values: CreateGroupInput) {
+    mutation.mutate(values)
+  }
+
+  const CatShowcase: React.FC = () => {
+    const groups = trpc.auth.getAllGroups.useQuery();
+    const justGroups = [...new Set(groups.data?.map((group) => group.group))]
+    
+    const handleClick = (e: MouseEvent<HTMLButtonElement>, group: string) => {
+      
+      setGroup({group})
+    }
+    return (
+      <div>
+        <Dropdown
+        label="Dropdown button"
+        dismissOnClick={false}
+        >
+        {justGroups && justGroups.map((group) => {
+          return (
+            <Dropdown.Item key={group}>
+              <button onClick={(e) => handleClick(e, group!)}>
+                {group}
+              </button>
+            </Dropdown.Item>
+          )
+        })}
+      </Dropdown>
+    </div>
+    );
+  };
   return (
     <Layout>
     
+    <CatShowcase />
+
+
     <div className='flex flex-nowrap flex-row overflow-x-auto gap-10 max-h-full py-5'>
-        {mutation.data && mutation.data.map((movie) => {
+      
+        {movies.data && movies.data.map((movie) => {
             return (
       
                 <div className="flex flex-col bg-slate-400  mx-2 rounded-xl basis-1" key={movie.id}>
-                  <div className="flex px-2 py-5 justify-center">
+                  <div className="align-bottom px-2 py-5 flex justify-center">
                     <Image
-                      className="justify-center"
                       alt="Movie Poster"
                       src={ movie.poster}
                       width={300}
@@ -54,7 +88,15 @@ const MovieDash: NextPage = () => {
                     </div>
                   </div>
                   <div className='flex justify-center pb-5'>
-                    <button type="button" onClick={handleDelete} className="px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">Delete</button>
+                    {!editToggle &&
+                      <button type="button" onClick={() => setEditToggle(!editToggle)} className="px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">Add to Group</button>
+                    }
+                    {editToggle &&
+                      <form onSubmit={handleSubmit(onSubmit)}>
+                      <input className="color-blue" type='text' placeholder="Group title" {...register('group')}/>
+                      <button className="px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">Save</button>
+                      </form >
+                    }
                   </div>
                 </div>
             )
@@ -66,4 +108,6 @@ const MovieDash: NextPage = () => {
 };
 
 export default MovieDash;
+
+
 

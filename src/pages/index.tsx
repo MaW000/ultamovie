@@ -7,6 +7,7 @@ import Layout from '../components/Layout';
 import { trpc } from "../utils/trpc";
 import { useState, useEffect } from "react";
 import { CreateMovieInput } from "../server/trpc/router/schema/movie.schema";
+import { group } from "console";
 const Home: NextPage = () => {
   const { data: sessionData} = useSession();
   const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
@@ -35,7 +36,8 @@ const Home: NextPage = () => {
     year: movie.Year,
     rated: movie.Rated,
     imdbRating: movie.imdbRating,
-    poster: movie.Poster
+    poster: movie.Poster,
+    group: 'Generalfz',
   };
   const handleSave = (input: CreateMovieInput) => {
     

@@ -75,6 +75,7 @@ model Movie {
   poster String
   imdbRating String
   userId String
+  group String?
   user User @relation(fields: [userId], references: [id])
-  
 }
+
