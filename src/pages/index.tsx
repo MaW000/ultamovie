@@ -40,8 +40,6 @@ const Home: NextPage = () => {
     group: 'Generalfz',
   };
   const handleSave = (input: CreateMovieInput) => {
-    
-   
     mutation.mutate(input)
   }
 

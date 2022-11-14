@@ -51,15 +51,10 @@ const MovieDash: NextPage = () => {
   };
   return (
     <Layout>
-    
     <CatShowcase />
-
-
     <div className='flex flex-nowrap flex-row overflow-x-auto gap-10 max-h-full py-5'>
-      
         {movies.data && movies.data.map((movie) => {
             return (
-      
                 <div className="flex flex-col bg-slate-400  mx-2 rounded-xl basis-1" key={movie.id}>
                   <div className="align-bottom px-2 py-5 flex justify-center">
                     <Image

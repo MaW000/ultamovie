@@ -5,6 +5,8 @@ import React, {ReactNode} from 'react';
 import { signIn, signOut, useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 export default function Layout({ children } : { children: ReactNode }) {
+  const { data: sessionData} = useSession();
+  console.log(sessionData)
   return (
     <>
       <Head>
@@ -22,9 +24,11 @@ export default function Layout({ children } : { children: ReactNode }) {
             </Link>
             <div className='flex'>
               
+              {sessionData && 
               <Link href="/moviedash" className="p-2">
                 Saved Movies
               </Link>
+              }
               <AuthShowcase />
             </div>
           </nav>
