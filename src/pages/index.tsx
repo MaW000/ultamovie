@@ -37,7 +37,7 @@ const Home: NextPage = () => {
     rated: movie.Rated,
     imdbRating: movie.imdbRating,
     poster: movie.Poster,
-    group: 'Generalfz',
+    group: 'General',
   };
   const handleSave = (input: CreateMovieInput) => {
     mutation.mutate(input)
