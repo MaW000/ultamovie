@@ -22,10 +22,10 @@ export default function Layout({ children } : { children: ReactNode }) {
             <Link href="/" className="text-lg font-bold">
               MovieDB
             </Link>
-            <div className='flex'>
+            <div className='flex gap-2'>
               
               {sessionData && 
-              <Link href="/moviedash" className="p-2">
+              <Link href="/moviedash" className="rounded-md border border-violet-50 bg-indigo-500 px-4 py-2 text-xl shadow-lg hover:bg-indigo-300">
                 Saved Movies
               </Link>
               }
@@ -48,7 +48,7 @@ const AuthShowcase: React.FC = () => {
   return (
     <div className="flex items-center justify-center gap-2">
       <button
-        className="rounded-md border border-violet-50 bg-purple-500 px-4 py-2 text-xl shadow-lg hover:bg-violet-100"
+        className="rounded-md border border-violet-50 bg-indigo-500 px-4 py-2 text-xl shadow-lg hover:bg-indigo-300"
         onClick={sessionData ? () => signOut() : () => signIn()}
       >
         {sessionData ? "Sign out" : "Sign in"}
