@@ -2,7 +2,6 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import Image from 'next/image'
-import { signIn, signOut, useSession } from "next-auth/react";
 import Layout from '../components/Layout';
 import { trpc } from "../utils/trpc";
 import React, { useState, useEffect, MouseEvent } from "react";
@@ -13,13 +12,28 @@ import { useForm } from 'react-hook-form'
 const MovieDash: NextPage = () => {
   const [group, setGroup] = useState({group: 'General'})
   const { handleSubmit, register } = useForm<CreateGroupInput>()
+  const [groupa, setGroupa] = useState({id: 'General'})
   const [editToggle, setEditToggle] = useState(false)
   const movies = trpc.auth.getAll.useQuery(group);
-  
+  let movieNum = ""
   const mutation = trpc.auth.editGroup.useMutation();
 
   function onSubmit(values: CreateGroupInput) {
-    mutation.mutate(values)
+    let valuesObj = {
+      ...values,
+      ...groupa
+    }
+    console.log(valuesObj)
+    mutation.mutate(valuesObj)
+  }
+
+  function buttonHandler(e: MouseEvent<HTMLButtonElement>) {
+    
+    const target = e.target as Element;
+    movieNum = target.id
+    setGroupa({id: target.id})
+    setEditToggle(!editToggle)
+    
   }
 
   const CatShowcase: React.FC = () => {
@@ -55,7 +69,7 @@ const MovieDash: NextPage = () => {
     <div className='flex flex-nowrap flex-row overflow-x-auto gap-10 max-h-full py-5'>
         {movies.data && movies.data.map((movie) => {
             return (
-                <div className="flex flex-col bg-slate-400  mx-2 rounded-xl basis-1" key={movie.id}>
+                <div className="flex flex-col bg-slate-400  mx-2 rounded-xl basis-1" key={movie.id} id={movie.id}>
                   <div className="align-bottom px-2 py-5 flex justify-center">
                     <Image
                       alt="Movie Poster"
@@ -84,7 +98,7 @@ const MovieDash: NextPage = () => {
                   </div>
                   <div className='flex justify-center pb-5'>
                     {!editToggle &&
-                      <button type="button" onClick={() => setEditToggle(!editToggle)} className="px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">Add to Group</button>
+                      <button type="button" id={movie.id} onClick={buttonHandler} className="px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded-full shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">Add to Group</button>
                     }
                     {editToggle &&
                       <form onSubmit={handleSubmit(onSubmit)}>

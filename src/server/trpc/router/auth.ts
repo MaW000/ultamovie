@@ -1,5 +1,5 @@
 import { router, publicProcedure, protectedProcedure } from "../trpc";
-import { createMovieSchema, createGroupSchema } from './schema/movie.schema'
+import { createMovieSchema, createGroupSchema, editGroupSchema } from './schema/movie.schema'
 export const authRouter = router({
   getSession: publicProcedure.query(({ ctx }) => {
     return ctx.session;
@@ -9,9 +9,7 @@ export const authRouter = router({
   }),
   saveMovie: protectedProcedure.input(createMovieSchema)
   .mutation(async ({ input, ctx }) => {
-    console.log(input, ctx)
-    let data = {...input, userId: ctx.session.user.id}
-    console.log(data)
+
     const movie = await ctx.prisma.movie.create({
       data: {
         
@@ -27,7 +25,7 @@ export const authRouter = router({
   }),
   getAll: protectedProcedure.input(createGroupSchema)
   .query(({ ctx, input }) => {
-    console.log(ctx)
+    
     return ctx.prisma.movie.findMany({
       where: {
         userId: ctx.session.user.id,
@@ -37,7 +35,7 @@ export const authRouter = router({
   }),
   getAllGroups: protectedProcedure
   .query(({ ctx }) => {
-    console.log(ctx)
+    
     return ctx.prisma.movie.findMany({
       where: {
         userId: ctx.session.user.id,
@@ -48,22 +46,18 @@ export const authRouter = router({
       }
     });
   }),
-  editGroup: protectedProcedure.input(createGroupSchema)
+  editGroup: protectedProcedure.input(editGroupSchema)
   .mutation(async ({ input, ctx }) => {
-    
+    console.log(input)
     let data = {...input}
-    console.log(data)
-    // const movie = await ctx.prisma.movie.create({
-    //   data: {
-        
-    //     user: {
-    //       connect: {
-    //         id: ctx.session.user.id
-    //       }
-    //     },
-    //     ...input,
-    //   }
-    // })
-    return
+    console.log(input)
+    const updateUser = await ctx.prisma.movie.update({
+      where: {
+        id: input.id,
+      },
+      data: {
+        group: input.group,
+      },
+    })
   }),
 });
